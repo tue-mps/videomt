@@ -1,0 +1,63 @@
+_BASE_: Base-VIPSeg-VideoInstanceSegmentation.yaml
+
+MODEL:
+  WEIGHTS: "model_final_3c8ec9.pkl"
+  META_ARCHITECTURE: "videomt"
+  BACKBONE:
+    DEEP_SUPERVISION: True
+    NO_OBJECT_WEIGHT: 0.1
+    CLASS_WEIGHT: 2.0
+    MASK_WEIGHT: 5.0
+    DICE_WEIGHT: 5.0
+    NUM_OBJECT_QUERIES: 100
+    SIZE_DIVISIBILITY: 32
+    OVERSAMPLE_RATIO: 3.0
+    IMPORTANCE_SAMPLE_RATIO: 0.75
+    DEC_LAYERS: 4
+    TRAIN_NUM_POINTS: 12544
+
+    TEST:
+      OVERLAP_THRESHOLD: 0.8
+      OBJECT_MASK_THRESHOLD: 0.8
+      WINDOW_INFERENCE: True
+      TASK: 'vps'
+      WINDOW_SIZE: 3
+
+SOLVER:
+  IMS_PER_BATCH: 8
+  STEPS: (14000,)
+  MAX_ITER: 20000
+
+INPUT:
+  MIN_SIZE_TRAIN: (480, 512, 544, 576, 608, 640, 672, 704, 736, 768, 800)
+  MAX_SIZE_TRAIN: 1333
+  MIN_SIZE_TEST: 720
+  SAMPLING_FRAME_NUM: 1
+
+  SAMPLING_FRAME_SHUFFLE: False
+  MIN_SIZE_TRAIN_SAMPLING: "choice"
+  RANDOM_FLIP: "flip"
+  AUGMENTATIONS: []
+  CROP:
+    ENABLED: False
+    TYPE: "absolute"
+    SIZE: (608, 608)
+  # For pseudo videos
+  PSEUDO:
+    AUGMENTATIONS: ['rotation']
+    MIN_SIZE_TRAIN: (480, 512, 544, 576, 608, 640, 672, 704, 736, 768, 800)
+    MAX_SIZE_TRAIN: 1333
+    CROP:
+      ENABLED: False
+      TYPE: "absolute"
+      SIZE: (608, 608)
+
+DATASETS:
+  DATASET_RATIO: [1.0, ]
+  DATASET_NEED_MAP: [False, ]
+  DATASET_TYPE: ['video_panoptic', ]
+  DATASET_TYPE_TEST: ['video_panoptic', ]
+  TRAIN: ("panoVSPW_vps_video_train",)
+  TEST: ("panoVSPW_vps_video_val",)
+
+OUTPUT_DIR: './output_videomt_720p_VIPSeg'

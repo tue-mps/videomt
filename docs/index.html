@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="VidEoMT reveals Vision Transformers can perform video segmentation efficiently without task-specific components ." />
+  <meta name="keywords" content="VidEoMT, ViT, vision transformer, transformers, video segmentation, semantic segmentation, instance segmentation, panoptic segmentation, segmentation">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VidEoMT: Your ViT is Secretly Also a Video Segmentation Model </title>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5TCTFJM8NG"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-5TCTFJM8NG');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" type="image/png" href="./static/images/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="./static/images/favicon.svg" />
+  <link rel="shortcut icon" href="./static/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./static/images/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-title" content="VidEoMT" />
+  <link rel="manifest" href="./static/images/site.webmanifest" />
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-menu is-active">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+      <a class="navbar-item" href="https://www.tue-mps.org">
+        <span class="icon">
+          <i class="fas fa-home"></i>
+        </span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <header class="has-text-centered mb-4">
+            <h1 class="title is-1 publication-title">VidEoMT: Your ViT is Secretly Also a Video Segmentation Model</h1>
+            <h2 class="subtitle is-4"></h2>
+          </header>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><a href="https://scholar.google.com/citations?user=q7sm490AAAAJ" target="_blank" rel="noopener noreferrer">Narges Norouzi</a><sup>1</sup>,</span>
+            <span class="author-block"><a href="https://scholar.google.com/citations?user=89vcmSoAAAAJ&hl=en" target="_blank" rel="noopener noreferrer">Idil Esen Zulfikar</a><sup>2,*</sup>,</span>
+            <span class="author-block"><a href="https://scholar.google.com/citations?user=Pr4XHRAAAAAJ" target="_blank" rel="noopener noreferrer">Niccolò Cavagnero</a><sup>1,*</sup>,</span>
+            <span class="author-block"><a href="https://tommiekerssies.com/" target="_blank" rel="noopener noreferrer">Tommie Kerssies</a><sup>1</sup>,</span>
+            <span class="author-block"><a href="https://scholar.google.com/citations?user=ZcULDB0AAAAJ" target="_blank" rel="noopener noreferrer">Bastian Leibe</a><sup>2</sup>,</span>
+            <span class="author-block"><a href="https://scholar.google.nl/citations?user=wy57br8AAAAJ" target="_blank" rel="noopener noreferrer">Gijs Dubbelman</a><sup>1</sup>,</span>
+            <span class="author-block"><a href="https://ddegeus.github.io/" target="_blank" rel="noopener noreferrer">Daan de Geus</a><sup>1</sup></span>
+          </div>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>&nbsp;Eindhoven University of Technology,</span>
+            <span class="author-block"><sup>2</sup>&nbsp;RWTH Aachen University</span>
+          </div>
+          <p class="has-text-centered mt-1" style="font-size: 0.6em;"> <em>* Equal contribution.</em></p>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <a href="https://github.com/tue-mps/videomt"
+                   class="external-link button is-normal is-rounded is-dark"
+                   target="_blank">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://github.com/tue-mps/videomt"
+                   class="external-link button is-normal is-rounded is-dark"
+                   target="_blank">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <!-- <div class="columns is-vcentered">
+        <div class="column">
+          <figure class="image">
+            <img src="./static/images/teaser_arch.jpeg" alt="Architecture Diagram" >
+          </figure>
+        </div>
+        <div class="column">
+          <figure class="image">
+            <img src="./static/images/teaser_plot_.jpg" alt="Performance Plot"  >
+          </figure>
+        </div>
+      </div> -->
+      <div class="columns is-vcentered is-centered">
+        <!-- Big left image -->
+        <div class="column is-12">
+          <figure class="image">
+            <img src="./static/images/teaser_arch.jpeg"
+                alt="Architecture Diagram"
+                style="width:100%; height:auto; display:block;">
+          </figure>
+        </div>
+
+        <!-- Smaller right image -->
+        <div class="column is-6">
+          <figure class="image" style="text-align:center;">
+            <img src="./static/images/teaser_plot_.jpg"
+                alt="Performance Plot"
+                style="width:100%; max-width:380px; height:auto; display:inline-block;">
+          </figure>
+        </div>
+      </div>
+      <!-- <p class="has-text-centered" style="font-size: 0.6em;">
+        [1] Bowen Cheng et al., <em>Masked-attention Mask Transformer for Universal Image Segmentation</em>, CVPR 2022.&nbsp;&nbsp;
+        [2] Zhe Chen et al., <em>Vision Transformer Adapter for Dense Predictions</em>, ICLR 2023.
+      </p> -->
+    </div>
+  </div>
+</section>
+
+<section class="hero is-light">
+  <div class="hero-body container is-max-desktop">
+    <!-- Overview. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Overview</h2>
+        <div class="content has-text-justified">
+          <p>
+            Existing online video segmentation models typically pair a per-frame segmenter with complex tracking modules, which increases architectural complexity and computational cost. We propose the <b>Video Encoder-only Mask Transformer (VidEoMT)</b>, a simple encoder-only video segmentation model built on a plain ViT that removes the need for dedicated tracking modules.
+          </p>
+          <p>
+            VidEoMT performs temporal modeling via a lightweight query propagation mechanism that reuses queries from the previous frame and fuses them with a small set of temporally agnostic learned queries. This design achieves the benefits of tracking without extra overhead, reaching competitive accuracy while being 5x–10× faster and running at up to 160 FPS with a ViT-L backbone.
+          </p>
+          
+        </div>
+      </div>
+    </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3"> Video Encoder-only Mask Transformer (VidEoMT)</h2>
+        <img src="./static/images/arch.jpeg" alt="Method Figure" style="width:100%; max-width: 900px; margin-top:1em; display:block; margin-left:auto; margin-right:auto;" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container is-max-desktop content">
+  <div class="has-text-centered">
+    <h2 class="title">Citation</h2>
+  </div>
+  <pre><code>@article{Norouzi2026VidEoMT,
+  author     = {Norouzi, Narges and Zulfikar, Idil and Cavagnero, Niccol\`{o} and Kerssies, Tommie  and Leibe, Bastian and Dubbelman, Gijs and {de Geus}, Daan},
+  title      = {{VidEoMT: Your ViT is Secretly Also a Video Segmentation Model}},
+  journal   = {arxiv},
+  year       = {2026},
+}</code></pre>
+  </div>
+</section>
+
+
+<footer class="footer py-6">
+  <div class="container">
+    <div class="content has-text-centered">
+      <a class="icon-link" href="https://github.com/tue-mps" target="_blank" rel="noopener noreferrer">
+        <i class="ai ai-arxiv fa-sm"></i>
+      </a>
+      <a class="icon-link" href="https://github.com/tue-mps" class="external-link" disabled>
+        <i class="fab fa-github fa-sm"></i>
+      </a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content is-small has-text-centered">
+          <p>
+            This website is adapted from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>, licensed under a
+            <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons BY-SA 4.0 License</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

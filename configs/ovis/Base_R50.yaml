@@ -1,0 +1,76 @@
+_BASE_: Base-OVIS-VideoInstanceSegmentation.yaml
+MODEL:
+  META_ARCHITECTURE: "videomt"
+  
+  BACKBONE:
+    DEEP_SUPERVISION: True
+    NO_OBJECT_WEIGHT: 0.1
+    CLASS_WEIGHT: 2.0
+    MASK_WEIGHT: 5.0
+    DICE_WEIGHT: 5.0
+    NUM_OBJECT_QUERIES: 200
+    DEC_LAYERS: 4
+    TRAIN_NUM_POINTS: 12544
+    SIZE_DIVISIBILITY: 32  
+    OVERSAMPLE_RATIO: 3.0
+    IMPORTANCE_SAMPLE_RATIO: 0.75
+
+    TEST:
+      OVERLAP_THRESHOLD: 0.8
+      OBJECT_MASK_THRESHOLD: 0.8
+      WINDOW_INFERENCE: True
+      TASK: 'vis'
+      WINDOW_SIZE: 3
+
+
+SOLVER:
+  IMS_PER_BATCH: 8
+  BASE_LR: 0.0001
+  STEPS: (14000,)
+  MAX_ITER: 20000
+  WARMUP_FACTOR: 1.0
+  WARMUP_ITERS: 10
+  WEIGHT_DECAY: 0.05
+
+INPUT:
+  MIN_SIZE_TRAIN: (320, 352, 392, 416, 448, 480, 512, 544, 576, 608, 640)
+  MAX_SIZE_TRAIN: 768
+  MIN_SIZE_TEST: 448
+  SAMPLING_FRAME_NUM: 1
+
+  SAMPLING_FRAME_SHUFFLE: False
+  MIN_SIZE_TRAIN_SAMPLING: "choice_by_clip"
+  RANDOM_FLIP: "flip_by_clip"
+  AUGMENTATIONS: []
+  CROP:
+    ENABLED: True
+    TYPE: "absolute_range"
+    SIZE: (384, 600)
+  # For pseudo videos
+  PSEUDO:
+    AUGMENTATIONS: ['rotation']
+    MIN_SIZE_TRAIN: (320, 352, 392, 416, 448, 480, 512, 544, 576, 608, 640)
+    MAX_SIZE_TRAIN: 768
+    CROP:
+      ENABLED: True
+      TYPE: "absolute_range"
+      SIZE: (384, 600)
+  LSJ_AUG:
+    ENABLED: False
+    IMAGE_SIZE: 768
+    MIN_SCALE: 0.1
+    MAX_SCALE: 2.0
+
+DATASETS:
+  DATASET_RATIO: [1.0, 1.0]
+  DATASET_NEED_MAP: [True, False, ]
+  DATASET_TYPE: ['image_instance', 'video_instance', ]
+  DATASET_TYPE_TEST: ['video_instance', ]
+  # The categories of all datasets will be mapped to the categories of the last dataset
+  TRAIN: ("coco2ovis_train", "ovis_train")
+  TEST: ("ovis_val",)
+
+DATALOADER:
+  FILTER_EMPTY_ANNOTATIONS: True
+
+OUTPUT_DIR: './output_videomt_R50_OVIS'

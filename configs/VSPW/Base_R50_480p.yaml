@@ -1,0 +1,49 @@
+_BASE_: Base-VSPW-VideoInstanceSegmentation.yaml
+
+MODEL:
+  WEIGHTS: "model_final_3c8ec9.pkl"
+  META_ARCHITECTURE: "videomt"
+  BACKBONE:
+    DEEP_SUPERVISION: True
+    NO_OBJECT_WEIGHT: 0.1
+    CLASS_WEIGHT: 2.0
+    MASK_WEIGHT: 5.0
+    DICE_WEIGHT: 5.0
+    NUM_OBJECT_QUERIES: 100
+    SIZE_DIVISIBILITY: 32
+    OVERSAMPLE_RATIO: 3.0
+    IMPORTANCE_SAMPLE_RATIO: 0.75
+    DEC_LAYERS: 4  
+    TRAIN_NUM_POINTS: 12544
+    TEST:
+      OVERLAP_THRESHOLD: 0.8
+      OBJECT_MASK_THRESHOLD: 0.8
+      WINDOW_INFERENCE: True
+      WINDOW_SIZE: 3
+      TASK: 'vss'
+
+SOLVER:
+  IMS_PER_BATCH: 8
+  STEPS: (14000,)
+  MAX_ITER: 20000
+
+INPUT:
+  SAMPLING_FRAME_NUM: 1
+  MIN_SIZE_TRAIN_SAMPLING: "choice"
+  RANDOM_FLIP: "flip"
+  AUGMENTATIONS: []
+  MIN_SIZE_TRAIN: (288, 320, 352, 384, 416, 448, 480, 512, 544, 576, 608, 640)
+  MIN_SIZE_TEST: 480
+  FORMAT: "RGB"
+
+DATASETS:
+  DATASET_RATIO: [1.0, ]
+  DATASET_NEED_MAP: [False, ]
+  DATASET_TYPE: ['video_semantic', ]
+  DATASET_TYPE_TEST: ['video_semantic', ]
+  # The categories of all datasets will be mapped to the categories of the last dataset
+  TRAIN: ("VSPW_vss_video_train",)
+  TEST: ("VSPW_vss_video_val",)
+
+OUTPUT_DIR: './output_videomt_R50_480p_VSPW'
+
