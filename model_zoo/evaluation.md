@@ -76,7 +76,7 @@ After generating the inference images using the above command, to calculate the 
 
 ``` bash
 DATAROOT='/path/to/dataset/VSPW_480p'
-GT_JSONFILE='/path/to/output/inference'
+IMGSAVEROOT='/path/to/output/inference'
 
 python utils/eval_miou_vspw.py  $DATAROOT $IMGSAVEROOT
 python utils/eval_vc_vspw.py $DATAROOT  $IMGSAVEROOT
