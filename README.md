@@ -128,7 +128,7 @@ If you find this work useful in your research, please cite it using the BibTeX e
 
 ```BibTeX
 @article{Norouzi2026VidEoMT,
-  author     = {Norouzi, Narges and Zulfikar, Idil and Cavagnero, Niccol\`{o} and Kerssies, Tommie and Leibe, Bastian and Dubbelman, Gijs and {de Geus}, Daan},
+  author     = {Norouzi, Narges and Zulfikar, Idil and Cavagnero, Niccolo and Kerssies, Tommie and Leibe, Bastian and Dubbelman, Gijs and {de Geus}, Daan},
   title      = {{VidEoMT: Your ViT is Secretly Also a Video Segmentation Model}},
   booktitle  = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
   year       = {2026},
