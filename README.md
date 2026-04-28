@@ -59,7 +59,7 @@ python train_net_video.py \
   --num-gpus 1 \
   --config-file /path/to/config.yaml \
   --eval-only MODEL.WEIGHTS /path/to/weight.pth \
-  MODEL.MODEL.BACKBONE.TEST.WINDOW_SIZE 1 \ 
+  MODEL.BACKBONE.TEST.WINDOW_SIZE 1 \ 
   OUTPUT_DIR /path/to/output
 ```
 
