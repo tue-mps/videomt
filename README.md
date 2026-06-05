@@ -111,8 +111,8 @@ To generate additional visualization samples, please use the code in [Visualizat
 - [x] Inference code
 - [x] Flops and FPS code
 - [x] Visualization code 
-- [ ] Training codes 
-- [ ] DINOv3 model zoo and code
+- [x] Training codes 
+- [x] DINOv3 model zoo and code
 
 ```
 
