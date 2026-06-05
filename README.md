@@ -72,7 +72,7 @@ For detailed instructions on running evaluation on different datasets, see [Eval
 
 ### Training
 
-To train an online VidEoMT model from a segmenter checkpoint, run:
+To train an online VidEoMT model, run:
 
 ```bash
 python3 train_net_video.py \
