@@ -14,6 +14,7 @@
 <th valign="bottom">AR<sub>10</sub></th>
 <th valign="bottom">FPS</th>
 <th valign="bottom">Download</th>
+<th valign="bottom">Init Weights</th>
 <!-- TABLE BODY -->
 <!-- ROW: VidEoMT-S  -->
 <tr><td align="left"><a href="../configs/ytvis19/videomt/vit-small/videomt_online_ViTS.yaml">VidEoMT-S</a></td>
@@ -21,6 +22,7 @@
 <td align="center">62.2</td>
 <td align="center">294</td>
 <td align="center"><a href="https://huggingface.co/tue-mps/VidEoMT/resolve/main/yt_2019_vit_small_52.8.pth?download=true">Model Weights</a></td>
+<td align="center"><a href="https://huggingface.co/tue-mps/VidEoMT/resolve/main/dinov2_segmenter/yt_2019_small_segmenter.pth?download=true">Segmenter Weights</a></td>
 </tr>
 <!-- ROW: VidEoMT-B -->
 <tr><td align="left"><a href="../configs/ytvis19/videomt/vit-base/videomt_online_ViTB.yaml">VidEoMT-B</a></td>
@@ -28,6 +30,7 @@
 <td align="center">66.5</td>
 <td align="center">251</td>
 <td align="center"><a href="https://huggingface.co/tue-mps/VidEoMT/resolve/main/yt_2019_vit_base_58.2.pth?download=true">Model Weights</a></td>
+<td align="center"><a href="https://huggingface.co/tue-mps/VidEoMT/resolve/main/dinov2_segmenter/yt_2019_base_segmenter.pth?download=true">Segmenter Weights</a></td>
 </tr>
 <!-- ROW: VidEoMT-L 640x640 -->
 <tr><td align="left"><a href="../configs/ytvis19/videomt/vit-large/videomt_online_ViTL.yaml">VidEoMT-L</a></td>
@@ -35,6 +38,7 @@
 <td align="center">73.9</td>
 <td align="center">160</td>
 <td align="center"><a href="https://huggingface.co/tue-mps/VidEoMT/resolve/main/yt_2019_vit_large_68.6.pth?download=true">Model Weights</a></td>
+<td align="center"><a href="https://huggingface.co/tue-mps/VidEoMT/resolve/main/dinov2_segmenter/yt_2019_large_segmenter.pth?download=true">Segmenter Weights</a></td>
 </tr>
 </tbody></table>  
 
@@ -51,12 +55,14 @@
 <th valign="bottom">AR<sub>10</sub></th>
 <th valign="bottom">FPS</th>
 <th valign="bottom">Download</th>
+<th valign="bottom">Init Weights</th>
 <!-- TABLE BODY -->
 <tr><td align="left"><a href="../configs/ytvis21/videomt/vit-large/videomt_online_ViTL.yaml">VidEoMT-L</a></td>
 <td align="center">63.1</td>
 <td align="center">68.1</td>
 <td align="center">160</td>
 <td align="center"><a href="https://huggingface.co/tue-mps/VidEoMT/resolve/main/yt_2021_vit_large_63.1.pth?download=true">Model Weights</a></td>
+<td align="center"><a href="https://huggingface.co/tue-mps/VidEoMT/resolve/main/dinov2_segmenter/yt_2021_segmenter.pth?download=true">Segmenter Weights</a></td>
 
 </tbody></table>
 
@@ -70,12 +76,14 @@
 <th valign="bottom">AR<sup>L</sup><sub>10</sub></th>
 <th valign="bottom">FPS</th>
 <th valign="bottom">Download</th>
+<th valign="bottom">Init Weights</th>
 <!-- TABLE BODY -->
 <tr><td align="left"><a href="../configs/ytvis22/videomt/vit-large/videomt_online_ViTL.yaml">VidEoMT-L</a></td>
 <td align="center">42.6</td>
 <td align="center">48.1</td>
 <td align="center">161</td>
 <td align="center"><a href="https://huggingface.co/tue-mps/VidEoMT/resolve/main/yt_2022_vit_large_42.6.pth?download=true">Model Weights</a></td>
+<td align="center"><a href="https://huggingface.co/tue-mps/VidEoMT/resolve/main/dinov2_segmenter/yt_2022_segmenter.pth?download=true">Segmenter Weights</a></td>
 
 </tbody></table>
 
@@ -89,12 +97,14 @@
 <th valign="bottom">AR<sub>10</sub></th>
 <th valign="bottom">FPS</th>
 <th valign="bottom">Download</th>
+<th valign="bottom">Init Weights</th>
 <!-- TABLE BODY -->
 <tr><td align="left"><a href="../configs/ovis/videomt/vit-large/videomt_online_ViTL.yaml">VidEoMT-L</a></td>
 <td align="center">52.5</td>
 <td align="center">57.5</td>
 <td align="center">115</td>
 <td align="center"><a href="https://huggingface.co/tue-mps/VidEoMT/resolve/main/ovis_vit_large_52.5.pth?download=true">Model Weights</a></td>
+<td align="center"><a href="https://huggingface.co/tue-mps/VidEoMT/resolve/main/dinov2_segmenter/ovis_segmenter.pth?download=true">Segmenter Weights</a></td>
 
 </tbody></table>
 
@@ -110,6 +120,7 @@
 <th valign="bottom">STQ</th>
 <th valign="bottom">FPS</th>
 <th valign="bottom">Download</th>
+<th valign="bottom">Init Weights</th>
 <!-- TABLE BODY -->
 <!-- ROW: VidEoMT-L 1024x1024 -->
 <tr><td align="left"><a href="../configs/VIPSeg/videomt/vit-large/videomt_Online_ViTL.yaml">VidEoMT-L</a></td>
@@ -117,6 +128,7 @@
 <td align="center">48.9</td>
 <td align="center">75</td>
 <td align="center"><a href="https://huggingface.co/tue-mps/VidEoMT/resolve/main/vipseg_vit_large_55.2.pth?download=true">Model Weights</a></td>
+<td align="center"><a href="https://huggingface.co/tue-mps/VidEoMT/resolve/main/dinov2_segmenter/vipseg_segmenter.pth?download=true">Segmenter Weights</a></td>
 </tr>
 </tbody></table>
 
@@ -131,6 +143,7 @@
 <th valign="bottom">mIoU</th>
 <th valign="bottom">FPS</th>
 <th valign="bottom">Download</th>
+<th valign="bottom">Init Weights</th>
 <!-- TABLE BODY -->
 <!-- ROW: VidEoMT-L 512x512 -->
 <tr><td align="left"><a href="../configs/VSPW/videomt/vit-large/videomt_online_ViTL.yaml">VidEoMT-L</a></td>
@@ -138,6 +151,7 @@
 <td align="center">64.9</td>
 <td align="center">73</td>
 <td align="center"><a href="https://huggingface.co/tue-mps/VidEoMT/resolve/main/vspw_vit_large_95.0_64.9.pth?download=true">Model Weights</a></td>
+<td align="center"><a href="https://huggingface.co/tue-mps/VidEoMT/resolve/main/dinov2_segmenter/vspw_segmenter.pth?download=true">Segmenter Weights</a></td>
 </tr>
 </tbody></table>
 

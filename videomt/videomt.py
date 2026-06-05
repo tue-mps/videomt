@@ -36,6 +36,8 @@ from .criterion_videomt import VideoSetCriterion, loss_reid
 from .modeling.matcher import VideoHungarianMatcher, VideoHungarianMatcher_Consistent
 from .utils.memory import retry_if_cuda_oom
 
+
+
 @META_ARCH_REGISTRY.register()
 class videomt(nn.Module):
     """
@@ -127,7 +129,7 @@ class videomt(nn.Module):
         weight_dict = {"loss_ce": class_weight, "loss_mask": mask_weight, "loss_dice": dice_weight}
 
         if deep_supervision:
-            dec_layers = cfg.MODEL.BACKBONE.DEC_LAYERS
+            dec_layers = len(cfg.MODEL.BACKBONE.SEGMENTER_BLOCKS)
             aux_weight_dict = {}
             for i in range(dec_layers - 1):
                 aux_weight_dict.update({k + f"_{i}": v for k, v in weight_dict.items()})
@@ -525,20 +527,13 @@ class videomt_segmenter(videomt):
         }
 
         if deep_supervision:
-            dec_layers = cfg.MODEL.BACKBONE.DEC_LAYERS
+            dec_layers = len(cfg.MODEL.BACKBONE.SEGMENTER_BLOCKS)
             aux_weight_dict = {}
             for i in range(dec_layers - 1):
                 aux_weight_dict.update({k + f"_{i}": v for k, v in weight_dict.items()})
             weight_dict.update(aux_weight_dict)
 
-        weight_dict.update(
-            {
-                "loss_ctx": 2.0,
-                "loss_ctx_aux": 2.0,
-                "loss_proto": 2.0,
-                "loss_proto_aux": 2.0,
-            }
-        )
+       
 
         losses = ["labels", "masks"]
 
@@ -743,7 +738,6 @@ class videomt_segmenter(videomt):
             out = self.backbone(images_tensor[start_idx:end_idx])
             for j in range(len(out['aux_outputs'])):
                 del out['aux_outputs'][j]['pred_masks'], out['aux_outputs'][j]['pred_logits']
-            del out['pred_reid_embed'], out['mask_features'], out['pred_embds_without_norm']
             out['pred_masks'] = out['pred_masks'].detach().cpu().to(torch.float32)
             out_list.append(out)
 
@@ -820,6 +814,7 @@ class videomt_segmenter(videomt):
 
         # filter out the background prediction
         keep = labels.ne(self.backbone.num_classes) & (scores > self.object_mask_threshold)
+        keep = keep.to(mask_pred.device)
         cur_scores = scores[keep]
         cur_classes = labels[keep]
         cur_ids = pred_id[keep]
@@ -916,7 +911,7 @@ class videomt_segmenter(videomt):
         sem_mask = sem_mask
         return {
                 "image_size": (output_height, output_width),
-                "pred_masks": sem_mask.cpu(),
+                "pred_masks": sem_mask,
                 "task": "vss",
             }
 
@@ -1040,7 +1035,7 @@ class videomt_online(videomt):
 
 
         if deep_supervision:
-            dec_layers = cfg.MODEL.BACKBONE.DEC_LAYERS
+            dec_layers = len(cfg.MODEL.BACKBONE.SEGMENTER_BLOCKS)
             aux_weight_dict = {}
             for i in range(dec_layers - 1):
                 aux_weight_dict.update({k + f"_{i}": v for k, v in weight_dict.items()})

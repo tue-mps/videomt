@@ -5,6 +5,7 @@ import numpy as np
 from collections import Counter
 import tqdm
 import torch
+import os
 
 from detectron2.checkpoint import DetectionCheckpointer
 from detectron2.config import get_cfg
@@ -37,7 +38,10 @@ def setup_cfg(args):
     cfg = get_cfg()
     add_videomt_config(cfg)
     cfg.merge_from_file(args.config_file)
-    cfg.merge_from_list(["MODEL.WEIGHTS", args.model_weights] + args.opts)
+    opts = list(args.opts)
+    use_fused_qkv = bool(args.fused_qkv and args.model_type == "dinov3")
+    opts += ["MODEL.BACKBONE.FUSED_QKV", str(use_fused_qkv)]
+    cfg.merge_from_list(["MODEL.WEIGHTS", args.model_weights] + opts)
     cfg.DATALOADER.NUM_WORKERS = 0
     cfg.freeze()
     setup_logger()
@@ -193,6 +197,13 @@ def main(args):
         measure_fps_online(model, data_loader, warmup_iters=args.warmup_iters)
         
     elif args.task == "flops":
+        if args.model_type == "dinov3":
+            model.backbone.encoder.backbone.config._attn_implementation = "eager"
+
+        elif args.model_type == "dinov2":
+            # must happen before timm model creation
+            os.environ["TIMM_FUSED_ATTN"] = "0"
+
         measure_flops(model, data_loader)
 
     else:
@@ -206,6 +217,8 @@ if __name__ == "__main__":
     parser.add_argument("--config-file", required=True, help="Path to config file")
     parser.add_argument("--model-weights", required=True, help="Path to model checkpoint")
     parser.add_argument("--warmup-iters", type=int, default=200, help="Warmup iterations for FPS")
+    parser.add_argument("--model-type", choices=["dinov2", "dinov3"], required=True, help="Model type for benchmarking")
+    parser.add_argument("--fused-qkv", action="store_true", help="Enable DINOv3 fused QKV projections")
     parser.add_argument("--opts", nargs=argparse.REMAINDER, default=[], help="Additional config options")
     args = parser.parse_args()
     main(args)

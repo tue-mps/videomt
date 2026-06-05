@@ -62,39 +62,7 @@ from detectron2.engine.hooks import HookBase
 from torch.optim import AdamW
 import wandb
 
-class AttentionMaskAnnealingHook(HookBase):
 
-    def mask_annealing(self, start_iter, current_iter, final_iter,dtype,device):
-        poly_power = 0.9
-        if current_iter < start_iter:
-            
-            return torch.ones(1, device=device, dtype=dtype)
-        elif current_iter >= final_iter:
-            return torch.zeros(1, device=device, dtype=dtype)
-        else:
-            progress = (current_iter - start_iter) / (final_iter - start_iter)
-            progress = torch.tensor(progress, device=device, dtype=dtype)
-            return (1.0 - progress).pow(poly_power) 
-
-    def after_step(self):
-        model = self.trainer.model
-        device = model.device
-        dtype = model.module.backbone.attn_mask_probs[0].dtype
-        if model.module.backbone.attn_mask_annealing_enabled:
-            for i in range(model.module.backbone.num_blocks):
-                model.module.backbone.attn_mask_probs[i] = self.mask_annealing(
-                    model.module.backbone.start_steps[i],
-                    self.trainer.iter,
-                    model.module.backbone.end_steps[i],
-                    dtype,
-                    device,
-                )
-            for i, prob in enumerate(model.module.backbone.attn_mask_probs):
-                self.trainer.storage.put_scalar(f"attn_mask_prob_{i}", prob.item())
-        
-
-        if comm.is_main_process():  # Ensure only the main process logs to W&B
-                wandb.log({"trainer/global_step": self.trainer.iter + 1})
 
 class Trainer(DefaultTrainer):
     """
@@ -312,7 +280,6 @@ def main(args):
         return res
 
     trainer = Trainer(cfg)
-    trainer.register_hooks([AttentionMaskAnnealingHook()])
     trainer.resume_or_load(resume=args.resume)
     
     return trainer.train()

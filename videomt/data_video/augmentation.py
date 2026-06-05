@@ -40,12 +40,14 @@ class RandomApplyClip(T.Augmentation):
         self.clip_frame_cnt = clip_frame_cnt
 
     def get_transform(self, *args):
+        print("get_transform in RandomApplyClip called", self.prob)
         if self._cnt % self.clip_frame_cnt == 0:
             self.do = self._rand_range() < self.prob
             self._cnt = 0   # avoiding overflow
         self._cnt += 1
 
         if self.do:
+            print("applying augmentation in RandomApplyClip")
             return self.aug.get_transform(*args)
         else:
             return NoOpTransform()

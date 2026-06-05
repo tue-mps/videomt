@@ -104,17 +104,27 @@ class VideoHungarianMatcher(nn.Module):
         for b in range(bs):
 
             out_prob = outputs["pred_logits"][b].softmax(-1)  # [num_queries, num_classes]
+            # print("out_prob shape: ", out_prob.shape)
             tgt_ids = targets[b]["labels"].to(torch.int64)
+            num_classes = out_prob.shape[-1]
+            # print("tgt_ids shape: ", tgt_ids)
 
+            # Ensure target class indices are within valid range to avoid CUDA device-side asserts
+            invalid_mask = (tgt_ids < 0) | (tgt_ids >= num_classes)
+            if invalid_mask.any():
+                unique_invalid = torch.unique(tgt_ids[invalid_mask])
+                print(
+                    "[VideoHungarianMatcher] Found invalid class ids in targets:",
+                    unique_invalid.tolist(),
+                    "; num_classes (including no-object) =",
+                    num_classes,
+                )
+                tgt_ids = tgt_ids.clamp(0, num_classes - 1)
 
             # Compute the classification cost. Contrary to the loss, we don't use the NLL,
             # but approximate it in 1 - proba[target class].
             # The 1 is a constant that doesn't change the matching, it can be ommitted.
-            try:
-                cost_class = -out_prob[:, tgt_ids]
-            except:
-                cost_class = 0.0
-                print(tgt_ids)
+            cost_class = -out_prob[:, tgt_ids]
 
             out_mask = outputs["pred_masks"][b]  # [num_queries, T, H_pred, W_pred]
             # gt masks are already padded when preparing target
@@ -246,6 +256,19 @@ class VideoHungarianMatcher_Consistent(VideoHungarianMatcher):
                 used_tgt = apper_frame_id[f]
                 out_prob = outputs["pred_logits"][overall_bs].softmax(-1)  # [num_queries, num_classes]
                 tgt_ids = targets[overall_bs]["labels"][used_tgt]
+                num_classes = out_prob.shape[-1]
+
+                # Ensure target class indices are within valid range to avoid CUDA device-side asserts
+                invalid_mask = (tgt_ids < 0) | (tgt_ids >= num_classes)
+                if invalid_mask.any():
+                    unique_invalid = torch.unique(tgt_ids[invalid_mask])
+                    print(
+                        "[VideoHungarianMatcher_Consistent] Found invalid class ids in targets:",
+                        unique_invalid.tolist(),
+                        "; num_classes (including no-object) =",
+                        num_classes,
+                    )
+                    tgt_ids = tgt_ids.clamp(0, num_classes - 1)
 
                 # Compute the classification cost. Contrary to the loss, we don't use the NLL,
                 # but approximate it in 1 - proba[target class].

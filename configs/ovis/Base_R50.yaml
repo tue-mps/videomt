@@ -20,7 +20,7 @@ MODEL:
       OBJECT_MASK_THRESHOLD: 0.8
       WINDOW_INFERENCE: True
       TASK: 'vis'
-      WINDOW_SIZE: 3
+      WINDOW_SIZE: 1
 
 
 SOLVER:

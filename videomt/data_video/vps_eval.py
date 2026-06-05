@@ -1,7 +1,3 @@
-# -------------------------------------------------------------------
-# Copied from DVIS++ code, https://github.com/zhang-tao-whu/DVIS_Plus/tree/main
-# Used under MIT License.
-# -------------------------------------------------------------------
 import itertools
 import json
 import logging

@@ -1,7 +1,3 @@
-# -------------------------------------------------------------------
-# Copied from DVIS++ code, https://github.com/zhang-tao-whu/DVIS_Plus/tree/main
-# Used under MIT License
-# -------------------------------------------------------------------
 import random
 from collections import deque
 from typing import Any, Collection, Deque, Iterable, Iterator, List, Sequence

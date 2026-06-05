@@ -1,7 +1,3 @@
-# -------------------------------------------------------------------
-# Copied from DVIS++ code, https://github.com/zhang-tao-whu/DVIS_Plus/tree/main
-# Used under MIT License.
-# -------------------------------------------------------------------
 import logging
 import numpy as np
 import os
@@ -94,7 +90,7 @@ class VSSEvaluator(DatasetEvaluator):
         video_id = inputs[0]["video_id"]
         image_names = [inputs[0]['file_names'][idx] for idx in inputs[0]["frame_idx"]]
         img_shape = outputs['image_size']
-        sem_seg_result = outputs['pred_masks'].numpy().astype(np.uint8)  # (t, h, w, 3)
+        sem_seg_result = outputs['pred_masks'].cpu().numpy().astype(np.uint8)  # (t, h, w, 3)
         sem_seg_result_ = np.zeros_like(sem_seg_result, dtype=np.uint8) + 255
         unique_cls = np.unique(sem_seg_result)
         for cls in unique_cls:

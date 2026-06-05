@@ -70,23 +70,55 @@ python train_net_video.py \
 
 For detailed instructions on running evaluation on different datasets, see [Evaluation](model_zoo/evaluation.md).
 
+### Training
+
+To train an online VidEoMT model from a segmenter checkpoint, run:
+
+```bash
+python3 train_net_video.py \
+  --num-gpus 4 \
+  --num-machines 2 \
+  --config-file /path/to/config.yaml \
+  MODEL.WEIGHTS /path/to/segmenter_weight.pth \
+  MODEL.BACKBONE.TEST.WINDOW_SIZE 1 \
+  OUTPUT_DIR /path/to/output
+```
+
+Replace `/path/to/segmenter_weight.pth` with the segmenter checkpoint used to initialize training. For DINOv2 models, choose this weight from the `Init Weights` column in [DINOv2 Models](model_zoo/dinov2.md).
+
+Replace `/path/to/output` with the directory where training logs and checkpoints should be written.
+
 ### Benchmark
 
 To calculate the FPS and GFLOPs, run: 
 
 ```bash
+# DINOv2 FPS
 python benchmark.py \
   --task fps \
   --config-file    /path/to/config.yaml \
   --model-weights  /path/to/weight.pth  \
-  --warmup-iters 100 
+  --warmup-iters 100 \
+  --model-type dinov2
+
+# DINOv3 FPS
+python benchmark.py \
+  --task fps \
+  --config-file    /path/to/config.yaml \
+  --model-weights  /path/to/weight.pth  \
+  --warmup-iters 100 \
+  --model-type dinov3 \
+  --fused-qkv
 
 export TIMM_FUSED_ATTN=0 
 python benchmark.py \
   --task flops \
   --config-file    /path/to/config.yaml \
-  --model-weights  /path/to/weight.pth  
+  --model-weights  /path/to/weight.pth \
+  --model-type dinov2
 ```
+
+For DINOv3 FPS benchmarking, enable `--fused-qkv`. This is recommended to get FPS closer to the DINOv2 setup.
 
 🔧 Replace `/path/to/config.yaml` with the path to the config file.  
 🔧 Replace `/path/to/weight.pth` with the path to the checkpoint to evaluate.   

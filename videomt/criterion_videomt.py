@@ -2,9 +2,7 @@
 # Code coppied and modified from https://github.com/Seung-Hun-Lee/CAVIS/blob/main/cavis/criterion_cavis.py
 # Used under the MIT License.
 # ---------------------------------------------------------------
-"""
-MaskFormer criterion.
-"""
+import logging
 
 import torch
 import torch.nn.functional as F
@@ -15,7 +13,8 @@ from detectron2.projects.point_rend.point_features import (
     get_uncertain_point_coords_with_randomness,
     point_sample,
 )
-from .utils.misc import is_dist_avail_and_initialized
+
+from videomt.utils.misc import is_dist_avail_and_initialized
 
 
 def dice_loss(
@@ -92,12 +91,20 @@ def loss_reid(qd_items, feat, loss_name='', loss_num='', reduce=False):
     aux_loss = 0
 
     num_qd_items = len(qd_items)
+    # if reduce:  # it seems worse when reduce is True
+    #     num_qd_items = torch.as_tensor(
+    #         [num_qd_items], dtype=torch.float, device=outputs['pred_reid_embed'].device)
+
+    #     if is_dist_avail_and_initialized():
+    #         torch.distributed.all_reduce(num_qd_items)
+    #     num_qd_items = torch.clamp(
+    #         num_qd_items / get_world_size(), min=1).item()
 
     if len(qd_items) == 0:
         losses = {
-            loss_name + loss_num: feat.sum() * 0,
-            loss_name + '_aux' + loss_num: feat.sum() * 0
-        }
+            loss_name+loss_num: feat.sum() * 0,
+            loss_name+'_aux'+loss_num: feat.sum() * 0
+            }
         return losses
 
     for qd_item in qd_items:
@@ -124,9 +131,9 @@ def loss_reid(qd_items, feat, loss_name='', loss_num='', reduce=False):
         aux_loss += (torch.abs(aux_pred - aux_label) ** 2).mean()
 
     losses = {
-        loss_name + loss_num: contras_loss / num_qd_items,
-        loss_name + '_aux' + loss_num: aux_loss / num_qd_items
-    }
+            loss_name+loss_num: contras_loss / num_qd_items,
+            loss_name+'_aux'+loss_num: aux_loss / num_qd_items
+            }
     return losses
 
 
@@ -158,48 +165,48 @@ class VideoSetCriterion(nn.Module):
         empty_weight[-1] = self.eos_coef
         self.register_buffer("empty_weight", empty_weight)
 
-        # Pointwise mask loss parameters
+        # pointwise mask loss parameters
         self.num_points = num_points
         self.oversample_ratio = oversample_ratio
         self.importance_sample_ratio = importance_sample_ratio
+        
     def loss_ctxs(self, queries, targets, indices, loss_name='', loss_num=''):
         idx = self._get_src_permutation_idx(indices)
         matched_queries = queries.permute(0, 2, 3, 1).flatten(0, 1)[idx]
+        # matched_queries = queries.permute(1, 0, 2)[idx]  # N, C
         gt_ids = torch.cat([t['ids'][i] for t, (_, i) in zip(targets, indices)]).flatten()
-
-        contrastive_items = []
-        queries_per_id = {k.item(): [] for k in gt_ids.unique()}
         
+        contrastive_items = []
+        
+        queries_per_id = {k.item(): [] for k in gt_ids.unique()}
         for i, q in enumerate(matched_queries):
             queries_per_id[gt_ids[i].item()].append(q)
-        
         for instance_i in queries_per_id.keys():
             pos_embed = torch.stack(queries_per_id[instance_i], dim=0)
             anchor = pos_embed.clone()
             neg_embeds = [torch.stack(queries_per_id[i], dim=0) for i in queries_per_id.keys() if i != instance_i]
-            
             if len(neg_embeds) == 0:
                 continue
-            
             neg_embed = torch.cat(neg_embeds, dim=0)
             pos_neg_embed = torch.cat([pos_embed, neg_embed], dim=0)
             num_pos = pos_embed.shape[0]
             pos_neg_label = pos_neg_embed.new_zeros(pos_neg_embed.shape[0], dtype=torch.long)
             pos_neg_label[:num_pos] = 1.
-
+            
             dot_product = torch.einsum('kc,nc->nk', anchor, pos_neg_embed)
-
+            
             aux_normalize_pos_neg_embed = F.normalize(pos_neg_embed, dim=-1)
             aux_normalize_anchor = F.normalize(anchor, dim=-1)
+            
             aux_cosine_similarity = torch.einsum('kc,nc->nk', aux_normalize_anchor, aux_normalize_pos_neg_embed)
-
+            
             contrastive_items.append({
                 'dot_product': dot_product,
                 'cosine_similarity': aux_cosine_similarity,
                 'label': pos_neg_label,
             })
-        
         return loss_reid(contrastive_items, queries, loss_name=loss_name, loss_num=loss_num)
+        
 
     def loss_labels(self, outputs, targets, indices, num_masks):
         """Classification loss (NLL)
@@ -210,6 +217,19 @@ class VideoSetCriterion(nn.Module):
 
         idx = self._get_src_permutation_idx(indices)
         target_classes_o = torch.cat([t["labels"][J] for t, (_, J) in zip(targets, indices)])
+        
+        # Ensure target class indices are within valid range to avoid errors
+        invalid_mask = (target_classes_o < 0) | (target_classes_o >= self.num_classes)
+        if invalid_mask.any():
+            unique_invalid = torch.unique(target_classes_o[invalid_mask])
+            print(
+                "[VideoSetCriterion] Found invalid class ids in targets:",
+                unique_invalid.tolist(),
+                "; num_classes =",
+                self.num_classes,
+            )
+            target_classes_o = target_classes_o.clamp(0, self.num_classes - 1)
+        
         target_classes = torch.full(
             src_logits.shape[:2], self.num_classes, dtype=torch.int64, device=src_logits.device
         )
@@ -294,6 +314,7 @@ class VideoSetCriterion(nn.Module):
              targets: list of dicts, such that len(targets) == batch_size.
                       The expected keys in each dict depends on the losses applied, see each loss' doc
         """
+        
         if matcher_outputs is None:
             outputs_without_aux = {k: v for k, v in outputs.items() if k != "aux_outputs"}
         else:
@@ -301,8 +322,9 @@ class VideoSetCriterion(nn.Module):
 
         # Retrieve the matching between the outputs of the last layer and the targets
         indices = self.matcher(outputs_without_aux, targets)
+        # [per image indicates], per image indicates -> (pred inds, gt inds)
 
-        # Compute the average number of target boxes across all nodes, for normalization purposes
+        # Compute the average number of target boxes accross all nodes, for normalization purposes
         num_masks = sum(len(t["labels"]) for t in targets)
         num_masks = torch.as_tensor(
             [num_masks], dtype=torch.float, device=next(iter(outputs.values())).device
@@ -315,7 +337,8 @@ class VideoSetCriterion(nn.Module):
         losses = {}
         for loss in self.losses:
             losses.update(self.get_loss(loss, outputs, targets, indices, num_masks))
-
+            
+        
         # Contrastive losses between context-aware instance embeddings
         if 'pred_reid_embed' in outputs:
             ctx_loss = self.loss_ctxs(outputs['pred_reid_embed'], targets, indices, loss_name='loss_ctx')
@@ -330,7 +353,7 @@ class VideoSetCriterion(nn.Module):
                     l_dict = self.get_loss(loss, aux_outputs, targets, indices, num_masks)
                     l_dict = {k + f"_{i}": v for k, v in l_dict.items()}
                     losses.update(l_dict)
-
+                    
         if ret_match_result:
             return losses, indices
         return losses

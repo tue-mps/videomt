@@ -138,10 +138,13 @@ def add_videomt_config(cfg):
     cfg.MODEL.BACKBONE.MODEL_NAME = "vit_large_patch14_reg4_dinov2"
     cfg.MODEL.BACKBONE.TRACKER_BLOCKS= [22,23]
     cfg.MODEL.BACKBONE.SEGMENTER_BLOCKS = [20,21,22,23]
+    # Cross-frame query propagation: 'gru' (default) or 'fusion'
     cfg.MODEL.BACKBONE.ATTN_MASK_ANNEALING_ENABLED = True
     cfg.MODEL.BACKBONE.START_STEPS = [14782, 29564, 44346, 59128]
     cfg.MODEL.BACKBONE.END_STEPS = [29564, 44346, 59128, 73910]
     cfg.MODEL.BACKBONE.DYNAMIC_EVAL = False
+    cfg.MODEL.BACKBONE.FUSED_QKV = False
+    cfg.MODEL.BACKBONE.NORM_QUERIES = False
 
     cfg.MODEL.BACKBONE.REID_BRANCH= True
     cfg.MODEL.BACKBONE.CONTEXT_FILTER_SIZE= 9
