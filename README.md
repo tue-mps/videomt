@@ -7,9 +7,12 @@
 ² RWTH Aachen University, 
 \* *Equal contribution*
 
-## Overview
+> 📢 **Announcement:** We released **PMT (Plain Mask Transformer)**, the next generation of VidEoMT — a segmentation model that works on top of **frozen** Vision Foundation Model features, requiring **no encoder finetuning**. The encoder stays fully frozen and shareable across tasks, while matching the accuracy and speed of finetuned alternatives.  
+> Both the research paper and the full source code are publicly available: [📄 Paper](https://arxiv.org/abs/2603.25398) · [💻 Code](https://github.com/tue-mps/pmt)
 
 ![VidEoMT Overview](./docs/static/images/teaser_arch.jpeg)
+
+## Overview
 
 We introduce **Video Encoder-only Mask Transformer (VidEoMT)**, a lightweight encoder-only model for online video segmentation built on a plain Vision Transformer (ViT). It performs both spatial and temporal reasoning within the ViT encoder, without relying on dedicated tracking modules or heavy task-specific heads.
 
