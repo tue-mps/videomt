@@ -13,7 +13,7 @@
 
 ## 🚀 NEW: LVMT
 We released **LVMT (Long-term Video Mask Transformer)**, an online video segmentation model built on top of **frozen** Vision Foundation Model features. LVMT introduces **Truncated Query Propagation (TQP)**, which combines per-query GRU memory with chunk-based training to track objects across long videos and handle occlusions, with **no speed penalty**. It improves over PMT by at least **+4.6 AP** across ViT-L/B/S on OVIS while running at similar FPS.  
-> The project page and full source code are publicly available: [🌐 Project Page](https://www.tue-mps.org/lvmt/) · [💻 Code](https://github.com/tue-mps/lvmt)
+> The project page and full source code are publicly available: [🌐 Project Page](http://tue-mps.github.io/lvmt/) · [💻 Code](https://github.com/tue-mps/lvmt)
 
 ## 🚀 NEW: PMT 
 We released **PMT (Plain Mask Transformer)**, the next generation of VidEoMT — a segmentation model that works on top of **frozen** Vision Foundation Model features, requiring **no encoder finetuning**. The encoder stays fully frozen and shareable across tasks, while matching the accuracy and speed of finetuned alternatives.  
